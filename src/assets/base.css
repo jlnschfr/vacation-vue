@@ -1,0 +1,19 @@
+@import './reset.css';
+@import './tokens.css';
+@import './fonts.css';
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-stretch: 25% 151%;
+  font-weight: 100 900;
+  src:
+    url('/HankenGrotesk-VariableFont_wght.woff2') format('woff2') tech('variations'),
+    url('/HankenGrotesk-VariableFont_wght.woff2') format('woff2-variations');
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Hanken Grotesk', sans-serif;
+  min-height: 100vh;
+}

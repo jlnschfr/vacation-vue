@@ -1,0 +1,15 @@
+:root {
+  --color-beige-light: #fdf5ed;
+  --color-brown: #581c0e;
+  --color-white: #ffffff;
+  --color-coral: #caab98;
+  --color-red: #a25236;
+  --color-red-light: #eecab2;
+  --color-purple: #c5c0f6;
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-background: var(--color-beige-light);
+  --color-text: var(--color-brown);
+}
