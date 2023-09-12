@@ -4,6 +4,14 @@ import UploadIcon from './icons/UploadIcon.vue'
 import CheckedIcon from './icons/CheckedIcon.vue'
 import { ref, type Ref } from 'vue'
 
+export interface Props {
+  isProcessing: boolean
+}
+
+withDefaults(defineProps<Props>(), {
+  isProcessing: false
+})
+
 const emits = defineEmits(['fileUpdated'])
 
 const state: Ref<string> = ref('default')
@@ -26,13 +34,20 @@ function setDropped(files: FileList): void {
 
   if (files.length) {
     file.value = files[0]
-    emits('fileUpdated')
+    emits('fileUpdated', file.value)
   }
 }
 </script>
 
 <template>
-  <div class="outer" :class="{ isOver: state === 'over', isDropped: state === 'dropped' }">
+  <div
+    class="outer"
+    :class="{
+      isOver: state === 'over',
+      isDropped: state === 'dropped',
+      isProcessing: isProcessing
+    }"
+  >
     <div
       class="inner"
       @dragover.prevent="state = 'over'"
@@ -63,6 +78,11 @@ function setDropped(files: FileList): void {
   margin-block-start: 3rem;
   padding: 1rem;
   transition: all 150ms ease-in-out;
+}
+
+.outer.isProcessing,
+.outer.isProcessing .inner {
+  background-color: #00f !important;
 }
 
 .outer.isOver {

@@ -23,4 +23,9 @@ button {
   cursor: pointer;
   padding: 0.5rem 2.5rem;
 }
+
+button:disabled {
+  color: #ccc;
+  cursor: default;
+}
 </style>
