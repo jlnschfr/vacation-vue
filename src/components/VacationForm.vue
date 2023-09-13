@@ -2,7 +2,7 @@
 import Input from './UI_Input.vue'
 import DragAndDrop from './UI_DragAndDrop.vue'
 import Button from './UI_Button.vue'
-import { reactive, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { createApi } from 'unsplash-js'
 import imglyRemoveBackground from '@imgly/background-removal'
 import mergeImages from 'merge-images'
@@ -13,30 +13,112 @@ const mergedImageSrc: Ref<string> = ref('')
 const isProcessing: Ref<boolean> = ref(false)
 const isDone: Ref<boolean> = ref(false)
 const hasError: Ref<boolean> = ref(false)
+const orientation: Ref<Orientation | string> = ref('')
 
-const aspectRatio = reactive({
-  width: 0,
-  height: 0
-})
+type Orientation = 'landscape' | 'portrait' | 'squarish'
+
+interface ImageSource {
+  blob: Blob
+  url: string
+}
+
+interface Details {
+  width: number
+  height: number
+  orientation: Orientation
+}
 
 function onInput(input: string) {
   query.value = input
   hasError.value = false
 }
 
-function onFileUpdate(userFile: File) {
+async function onFileUpdate(userFile: File) {
   file.value = userFile
   hasError.value = false
+
+  const details = await getImageDetails(file.value)
+  orientation.value = details.orientation
 }
 
-function getButtonLabel() {
-  if (isProcessing.value) {
-    return 'You are traveling...'
-  } else if (isDone.value) {
-    return 'I want to do it again!'
-  } else {
-    return 'Start my adventure'
+function getImageDetails(source: File | Blob): Promise<Details> {
+  return new Promise<Details>((resolve) => {
+    const reader = new FileReader()
+    const img = new Image()
+
+    reader.addEventListener(
+      'load',
+      () => {
+        img.addEventListener('load', () => {
+          const ratio = img.width / img.height
+          let orientation: Orientation
+
+          if (ratio > 1) {
+            orientation = 'landscape'
+          } else if (ratio < 1) {
+            orientation = 'portrait'
+          } else {
+            orientation = 'squarish'
+          }
+
+          resolve({
+            orientation,
+            width: img.width,
+            height: img.height
+          })
+        })
+
+        if (typeof reader.result === 'string') img.src = reader.result
+      },
+      false
+    )
+
+    reader.readAsDataURL(source)
+  })
+}
+
+function getRandomImage(): Promise<ImageSource> {
+  const unsplash = createApi({ accessKey: 'H77B8WG-2ePtnxonLBTJAPs8gomrotELt1J-9fbvVOQ' })
+  return new Promise((resolve) => {
+    unsplash.photos
+      .getRandom({ query: query.value, orientation: orientation.value })
+      .then((result) => {
+        if (result.errors) {
+          console.log('error occurred: ', result.errors[0])
+        } else {
+          const imageUrl: string = result.response.urls.regular
+
+          fetch(imageUrl).then((response) =>
+            response.blob().then((blob) => {
+              const url = URL.createObjectURL(blob)
+              resolve({ url, blob })
+            })
+          )
+        }
+      })
+  })
+}
+
+function removeBackground(file: File): Promise<ImageSource> {
+  let config = {
+    publicPath: 'public',
+    model: 'medium'
   }
+  return new Promise((resolve) => {
+    imglyRemoveBackground(file, config).then((blob: Blob) => {
+      const url: string = URL.createObjectURL(blob)
+      resolve({ url, blob })
+    })
+  })
+}
+
+async function merge(background: ImageSource, foreground: ImageSource) {
+  const details = await getImageDetails(foreground.blob)
+
+  return await mergeImages([foreground.url, background.url], {
+    width: details.width,
+    height: details.height
+  })
 }
 
 async function onSubmit() {
@@ -50,50 +132,24 @@ async function onSubmit() {
   }
 
   isProcessing.value = true
-  const sources: string[] = await Promise.all([removeBackground(file.value), getRandomImage()])
-  mergedImageSrc.value = await mergeImages(sources.reverse())
+  const [imageBackground, imageForeground]: ImageSource[] = await Promise.all([
+    removeBackground(file.value),
+    getRandomImage()
+  ])
 
+  mergedImageSrc.value = await merge(imageBackground, imageForeground)
   isProcessing.value = false
   isDone.value = true
 }
 
-function removeBackground(file: File): Promise<string> {
-  let config = {
-    publicPath: 'public',
-    model: 'small'
+function getButtonLabel() {
+  if (isProcessing.value) {
+    return 'You are traveling...'
+  } else if (isDone.value) {
+    return 'I want to do it again!'
+  } else {
+    return 'Start my adventure'
   }
-  return new Promise((resolve) => {
-    imglyRemoveBackground(file, config).then((blob: Blob) => {
-      const url: string = URL.createObjectURL(blob)
-      resolve(url)
-    })
-  })
-}
-
-function getRandomImage(): Promise<string> {
-  const unsplash = createApi({ accessKey: 'H77B8WG-2ePtnxonLBTJAPs8gomrotELt1J-9fbvVOQ' })
-  return new Promise((resolve) => {
-    unsplash.photos.getRandom({ query: query.value }).then((result) => {
-      if (result.errors) {
-        console.log('error occurred: ', result.errors[0])
-      } else {
-        console.log(result.response)
-        const imageUrl: string = result.response.urls.regular
-        aspectRatio.width = result.response.width
-        aspectRatio.height = result.response.height
-
-        console.log(aspectRatio.width)
-        console.log(aspectRatio.height)
-
-        fetch(imageUrl).then((response) =>
-          response.blob().then((blob) => {
-            const randomPhotoUrl = URL.createObjectURL(blob)
-            resolve(randomPhotoUrl)
-          })
-        )
-      }
-    })
-  })
 }
 </script>
 
@@ -123,6 +179,7 @@ img {
   color: var(--color-red);
   margin-block-start: 0.5rem;
 }
+
 .error.hidden {
   display: none;
 }

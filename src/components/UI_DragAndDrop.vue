@@ -2,6 +2,7 @@
 import FileIcon from './icons/FileIcon.vue'
 import UploadIcon from './icons/UploadIcon.vue'
 import CheckedIcon from './icons/CheckedIcon.vue'
+import SendIcon from './icons/SendIcon.vue'
 import { ref, type Ref } from 'vue'
 
 export interface Props {
@@ -30,12 +31,15 @@ function onChange(event: Event): void {
 }
 
 function setDropped(files: FileList): void {
-  state.value = 'dropped'
-
-  if (files.length) {
-    file.value = files[0]
-    emits('fileUpdated', file.value)
+  if (!files.length) return
+  if (!(files[0].type.includes('image/png') || files[0].type.includes('image/jpeg'))) {
+    state.value = 'default'
+    return
   }
+
+  state.value = 'dropped'
+  file.value = files[0]
+  emits('fileUpdated', file.value)
 }
 </script>
 
@@ -44,8 +48,7 @@ function setDropped(files: FileList): void {
     class="outer"
     :class="{
       isOver: state === 'over',
-      isDropped: state === 'dropped',
-      isProcessing: isProcessing
+      isDropped: state === 'dropped'
     }"
   >
     <div
@@ -68,6 +71,18 @@ function setDropped(files: FileList): void {
         <p for="file" class="u-text-bold">{{ file.name }} selected</p>
       </div>
     </div>
+
+    <Transition>
+      <div v-if="isProcessing" class="animation">
+        <SendIcon class="icon" />
+        <SendIcon class="icon" />
+        <SendIcon class="icon" />
+        <SendIcon class="icon" />
+        <SendIcon class="icon" />
+        <SendIcon class="icon" />
+        <SendIcon class="icon" />
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -77,16 +92,8 @@ function setDropped(files: FileList): void {
   block-size: 20rem;
   margin-block-start: 3rem;
   padding: 1rem;
+  position: relative;
   transition: all 150ms ease-in-out;
-}
-
-.outer.isProcessing,
-.outer.isProcessing .inner {
-  background-color: #00f !important;
-}
-
-.outer.isOver {
-  padding: 0;
 }
 
 .inner {
@@ -101,6 +108,9 @@ function setDropped(files: FileList): void {
   transition: all 150ms ease-in-out;
 }
 
+.outer.isOver {
+  padding: 0;
+}
 .outer.isOver .inner {
   background-color: var(--color-red-light);
   border: 0.25rem dashed var(--color-white);
@@ -134,5 +144,94 @@ input:focus + label {
 .icon {
   height: auto;
   width: 3rem;
+}
+
+.animation {
+  align-items: center;
+  background-color: var(--color-red-light);
+  block-size: 100%;
+  color: var(--color-white);
+  display: flex;
+  inline-size: 100%;
+  inset: 0;
+  justify-content: center;
+  overflow: hidden;
+  position: absolute;
+  transition: all 150ms ease-in-out;
+}
+
+.animation .icon {
+  left: -50%;
+  position: absolute;
+  top: 150%;
+}
+
+.animation .icon:nth-child(1) {
+  animation: animation 4500ms 0ms linear infinite;
+  width: 5rem;
+}
+
+.animation .icon:nth-child(2) {
+  animation: animation 3500ms 500ms linear infinite;
+  transform: translate3d(0, -150%, 0);
+  width: 8rem;
+}
+
+.animation .icon:nth-child(3) {
+  animation: animation 5000ms 1000ms linear infinite;
+  transform: translate3d(0, 0, 0);
+  width: 8rem;
+}
+
+.animation .icon:nth-child(4) {
+  animation: animation 5500ms 1500ms linear infinite;
+  transform: translate3d(0, -100%, 0);
+  width: 12rem;
+}
+
+.animation .icon:nth-child(5) {
+  animation: animation 4000ms 2000ms linear infinite;
+  transform: translate3d(0, -300%, 0);
+  width: 4rem;
+}
+
+.animation .icon:nth-child(6) {
+  animation: animation 3500ms 2500ms linear infinite;
+  transform: translate3d(0, -50%, 0);
+  width: 6rem;
+}
+
+.animation .icon:nth-child(7) {
+  animation: animation 5500ms 3000ms linear infinite;
+  transform: translate3d(0, 100%, 0);
+  width: 8rem;
+}
+
+.animation .icon:nth-child(8) {
+  animation: animation 4500ms 3500ms linear infinite;
+  transform: translate3d(0, -200%, 0);
+  width: 12rem;
+}
+
+@keyframes animation {
+  from {
+    left: -50%;
+    top: 150%;
+  }
+
+  to {
+    left: 150%;
+    top: -50%;
+  }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 250ms ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
