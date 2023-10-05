@@ -21,6 +21,7 @@ button {
   border: none;
   color: var(--color-white);
   cursor: pointer;
+  inline-size: 100%;
   padding: 0.5rem 2.5rem;
 }
 

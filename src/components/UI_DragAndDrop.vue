@@ -47,29 +47,29 @@ function setDropped(files: FileList): void {
 
 <template>
   <div
-    class="outer"
+    class="Outer"
     :class="{
       isOver: state === 'over',
       isDropped: state === 'dropped'
     }"
   >
     <div
-      class="inner"
+      class="Inner"
       @dragover.prevent="state = 'over'"
       @dragleave.prevent="state = 'default'"
       @drop.prevent="onDrop"
     >
-      <div class="text" v-if="state === 'default'">
-        <FileIcon class="icon" />
+      <div class="Text" v-if="state === 'default'">
+        <FileIcon class="Icon" />
         <input id="file" type="file" accept="image/png, image/jpeg" @change="onChange" />
         <label for="file" class="u-text-bold">Choose a file or drag it here.</label>
       </div>
-      <div class="text" v-else-if="state === 'over'">
-        <UploadIcon class="icon" />
+      <div class="Text" v-else-if="state === 'over'">
+        <UploadIcon class="Icon" />
         <p for="file" class="u-text-bold">Drop your file to proceed.</p>
       </div>
-      <div class="text" v-else-if="state === 'dropped' && file?.name">
-        <CheckedIcon class="icon" />
+      <div class="Text" v-else-if="state === 'dropped' && file?.name">
+        <CheckedIcon class="Icon" />
         <p for="file" class="u-text-bold">{{ file.name }} selected</p>
       </div>
     </div>
@@ -81,16 +81,15 @@ function setDropped(files: FileList): void {
 </template>
 
 <style scoped>
-.outer {
+.Outer {
   background: linear-gradient(var(--color-coral), var(--color-purple));
   block-size: 20rem;
-  margin-block-start: 3rem;
   padding: 1rem;
   position: relative;
   transition: all 150ms ease-in-out;
 }
 
-.inner {
+.Inner {
   align-items: center;
   background-color: var(--color-white);
   block-size: 100%;
@@ -102,17 +101,17 @@ function setDropped(files: FileList): void {
   transition: all 150ms ease-in-out;
 }
 
-.outer.isOver {
+.Outer.isOver {
   padding: 0;
 }
 
-.outer.isOver .inner {
+.Outer.isOver .Inner {
   background-color: var(--color-red-light);
   border: 0.25rem dashed var(--color-white);
   color: var(--color-white);
 }
 
-.text {
+.Text {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -137,7 +136,7 @@ input:focus + label {
   outline: 1px dotted -webkit-focus-ring-color;
 }
 
-.icon {
+.Icon {
   block-size: auto;
   inline-size: 3rem;
 }

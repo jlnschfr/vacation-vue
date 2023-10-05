@@ -20,27 +20,33 @@ const inputValue = ref(props.value)
 </script>
 
 <template>
-  <label v-if="hasLabel" :for="id" :class="{ hidden: !inputValue }" class="u-text-small">
-    {{ placeholder }}
-  </label>
-  <input
-    :id="id"
-    class="u-text"
-    v-model="inputValue"
-    :type="type"
-    :placeholder="placeholder"
-    @input="$emit('input', inputValue)"
-  />
+  <div>
+    <label v-if="hasLabel" :for="id" :class="{ isHidden: !inputValue }" class="u-text-small">
+      {{ placeholder }}
+    </label>
+    <input
+      :id="id"
+      class="u-text"
+      v-model="inputValue"
+      :type="type"
+      :placeholder="placeholder"
+      @input="$emit('input', inputValue)"
+    />
+  </div>
 </template>
 
 <style scoped>
+div {
+  inline-size: 100%;
+}
+
 label {
   display: block;
   padding-inline: 1rem;
   transition: all 150ms;
 }
 
-.hidden {
+.isHidden {
   opacity: 0;
   transform: translateY(50%);
 }

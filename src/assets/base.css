@@ -15,5 +15,14 @@ body {
   background: var(--color-background);
   color: var(--color-text);
   font-family: 'Hanken Grotesk', sans-serif;
-  min-height: 100vh;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }

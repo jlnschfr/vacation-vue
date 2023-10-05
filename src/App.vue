@@ -30,13 +30,13 @@ header,
 main,
 footer {
   margin: 0 auto;
+  margin-block-start: 4rem;
   max-inline-size: 45rem;
   padding-inline: 2rem;
 }
 
-header,
 footer {
-  margin-block-start: 4rem;
+  margin-block-end: 4rem;
 }
 
 header h1 {

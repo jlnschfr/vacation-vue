@@ -2,7 +2,7 @@
 import Input from './UI_Input.vue'
 import DragAndDrop from './UI_DragAndDrop.vue'
 import Button from './UI_Button.vue'
-import { ref, type Ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { createApi } from 'unsplash-js'
 import imglyRemoveBackground, { type Config } from '@imgly/background-removal'
 import mergeImages from 'merge-images'
@@ -15,6 +15,10 @@ const isProcessing: Ref<boolean> = ref(false)
 const isDone: Ref<boolean> = ref(false)
 const hasError: Ref<boolean> = ref(false)
 const orientation: Ref<Orientation> = ref('landscape')
+
+const isTouchDevice: Ref<boolean> = computed(() => {
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0
+})
 
 type Orientation = 'landscape' | 'portrait' | 'squarish'
 
@@ -109,10 +113,14 @@ function removeBackground(file: File): Promise<ImageSource> {
     model: 'medium'
   }
   return new Promise((resolve) => {
-    imglyRemoveBackground(file, config).then((blob: Blob) => {
-      const url: string = URL.createObjectURL(blob)
-      resolve({ url, blob })
-    })
+    imglyRemoveBackground(file, config)
+      .then((blob: Blob) => {
+        const url: string = URL.createObjectURL(blob)
+        resolve({ url, blob })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   })
 }
 
@@ -159,33 +167,70 @@ function getButtonLabel() {
 </script>
 
 <template>
-  <form class="VacationForm" @submit.prevent="onSubmit">
-    <Input type="text" id="keyword-input" placeholder="your location keywords" @input="onInput" />
-    <DragAndDrop @fileUpdated="onFileUpdate" :isProcessing="isProcessing" v-if="!mergedImageSrc" />
-    <img v-if="mergedImageSrc" :src="mergedImageSrc" />
+  <form v-if="!isTouchDevice" @submit.prevent="onSubmit">
+    <Input
+      class="Input"
+      type="text"
+      id="keyword-input"
+      placeholder="your location keywords"
+      @input="onInput"
+    />
+    <Transition>
+      <DragAndDrop
+        class="DragAndDrop"
+        @fileUpdated="onFileUpdate"
+        :isProcessing="isProcessing"
+        v-if="!mergedImageSrc"
+      />
+      <img v-else :src="mergedImageSrc" />
+    </Transition>
     <Button class="Button" type="submit" :label="getButtonLabel()" :disabled="isProcessing" />
-    <p class="error u-text-small" :class="{ hidden: !hasError }">
+    <p class="Error u-text-small" :class="{ isHidden: !hasError }">
       You need to add an image and keywords!
     </p>
   </form>
+  <div v-else class="Warning u-text">
+    This feature is supported only by desktop browsers. The hardware resources on your mobile device
+    may not be sufficient.
+  </div>
 </template>
 
 <style scoped>
-.VacationForm,
-.Button {
-  margin-block-start: 3rem;
+form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
+.DragAndDrop,
 img {
   inline-size: 100%;
 }
 
-.error {
+img,
+.Button,
+.DragAndDrop {
+  margin-block-start: 3rem;
+}
+
+.Input,
+.Button {
+  max-inline-size: 20rem;
+}
+
+.Error {
   color: var(--color-red);
   margin-block-start: 0.5rem;
 }
 
-.error.hidden {
+.Error.isHidden {
   display: none;
+}
+
+.Warning {
+  background-color: var(--color-yellow);
+  border: 0.25rem dashed var(--color-text);
+  margin-block-start: 3rem;
+  padding: 1rem;
 }
 </style>
