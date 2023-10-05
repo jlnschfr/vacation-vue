@@ -12,10 +12,11 @@ export interface Props {
 defineEmits(['input'])
 
 const props = withDefaults(defineProps<Props>(), {
-  hasLabel: true
+  hasLabel: true,
+  value: ''
 })
 
-const inputValue = ref(props.value || '')
+const inputValue = ref(props.value)
 </script>
 
 <template>

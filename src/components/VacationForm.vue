@@ -4,8 +4,9 @@ import DragAndDrop from './UI_DragAndDrop.vue'
 import Button from './UI_Button.vue'
 import { ref, type Ref } from 'vue'
 import { createApi } from 'unsplash-js'
-import imglyRemoveBackground from '@imgly/background-removal'
+import imglyRemoveBackground, { type Config } from '@imgly/background-removal'
 import mergeImages from 'merge-images'
+import type { Random } from 'unsplash-js/dist/methods/photos/types'
 
 const query: Ref<string> = ref('')
 const file: Ref<File | undefined> = ref()
@@ -13,7 +14,7 @@ const mergedImageSrc: Ref<string> = ref('')
 const isProcessing: Ref<boolean> = ref(false)
 const isDone: Ref<boolean> = ref(false)
 const hasError: Ref<boolean> = ref(false)
-const orientation: Ref<Orientation | string> = ref('')
+const orientation: Ref<Orientation> = ref('landscape')
 
 type Orientation = 'landscape' | 'portrait' | 'squarish'
 
@@ -86,7 +87,10 @@ function getRandomImage(): Promise<ImageSource> {
         if (result.errors) {
           console.log('error occurred: ', result.errors[0])
         } else {
-          const imageUrl: string = result.response.urls.regular
+          const response: Random = Array.isArray(result.response)
+            ? result.response[0]
+            : result.response
+          const imageUrl: string = response.urls.regular
 
           fetch(imageUrl).then((response) =>
             response.blob().then((blob) => {
@@ -100,7 +104,7 @@ function getRandomImage(): Promise<ImageSource> {
 }
 
 function removeBackground(file: File): Promise<ImageSource> {
-  let config = {
+  let config: Config = {
     publicPath: 'public',
     model: 'medium'
   }
@@ -113,12 +117,13 @@ function removeBackground(file: File): Promise<ImageSource> {
 }
 
 async function merge(background: ImageSource, foreground: ImageSource) {
-  const details = await getImageDetails(foreground.blob)
-
-  return await mergeImages([foreground.url, background.url], {
+  const details: Details = await getImageDetails(foreground.blob)
+  const config: Config = {
     width: details.width,
     height: details.height
-  })
+  }
+
+  return await mergeImages([foreground.url, background.url], config)
 }
 
 async function onSubmit() {
@@ -172,7 +177,7 @@ function getButtonLabel() {
 }
 
 img {
-  width: 100%;
+  inline-size: 100%;
 }
 
 .error {

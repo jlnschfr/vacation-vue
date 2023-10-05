@@ -25,7 +25,7 @@ button {
 }
 
 button:disabled {
-  color: #ccc;
+  color: var(--color-red-light);
   cursor: default;
 }
 </style>
