@@ -7,12 +7,14 @@ export interface Props {
   placeholder: string
   id: string
   value?: string
+  disabled: boolean
 }
 
 defineEmits(['input'])
 
 const props = withDefaults(defineProps<Props>(), {
   hasLabel: true,
+  disabled: false,
   value: ''
 })
 
@@ -26,6 +28,7 @@ const inputValue = ref(props.value)
     </label>
     <input
       :id="id"
+      :disabled="disabled"
       class="u-text"
       v-model="inputValue"
       :type="type"

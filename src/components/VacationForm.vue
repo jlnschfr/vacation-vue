@@ -113,14 +113,10 @@ function removeBackground(file: File): Promise<ImageSource> {
     model: 'medium'
   }
   return new Promise((resolve) => {
-    imglyRemoveBackground(file, config)
-      .then((blob: Blob) => {
-        const url: string = URL.createObjectURL(blob)
-        resolve({ url, blob })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    imglyRemoveBackground(file, config).then((blob: Blob) => {
+      const url: string = URL.createObjectURL(blob)
+      resolve({ url, blob })
+    })
   })
 }
 
@@ -145,6 +141,7 @@ async function onSubmit() {
   }
 
   isProcessing.value = true
+
   const [imageBackground, imageForeground]: ImageSource[] = await Promise.all([
     removeBackground(file.value),
     getRandomImage()
@@ -173,6 +170,7 @@ function getButtonLabel() {
       type="text"
       id="keyword-input"
       placeholder="your location keywords"
+      :disabled="isProcessing || isDone"
       @input="onInput"
     />
     <Transition>
@@ -182,7 +180,7 @@ function getButtonLabel() {
         :isProcessing="isProcessing"
         v-if="!mergedImageSrc"
       />
-      <img v-else :src="mergedImageSrc" />
+      <img alt="Your beautiful new vacation image" v-else :src="mergedImageSrc" />
     </Transition>
     <Button class="Button" type="submit" :label="getButtonLabel()" :disabled="isProcessing" />
     <p class="Error u-text-small" :class="{ isHidden: !hasError }">

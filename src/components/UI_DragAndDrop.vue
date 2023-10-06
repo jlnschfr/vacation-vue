@@ -60,16 +60,16 @@ function setDropped(files: FileList): void {
       @drop.prevent="onDrop"
     >
       <div class="Text" v-if="state === 'default'">
-        <FileIcon class="Icon" />
+        <FileIcon aria-hidden="true" class="Icon" />
         <input id="file" type="file" accept="image/png, image/jpeg" @change="onChange" />
         <label for="file" class="u-text-bold">Choose a file or drag it here.</label>
       </div>
       <div class="Text" v-else-if="state === 'over'">
-        <UploadIcon class="Icon" />
+        <UploadIcon aria-hidden="true" class="Icon" />
         <p for="file" class="u-text-bold">Drop your file to proceed.</p>
       </div>
       <div class="Text" v-else-if="state === 'dropped' && file?.name">
-        <CheckedIcon class="Icon" />
+        <CheckedIcon aria-hidden="true" class="Icon" />
         <p for="file" class="u-text-bold">{{ file.name }} selected</p>
       </div>
     </div>

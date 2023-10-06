@@ -4,13 +4,13 @@ import SendIcon from './icons/SendIcon.vue'
 
 <template>
   <div class="Animation">
-    <SendIcon class="Icon" />
-    <SendIcon class="Icon" />
-    <SendIcon class="Icon" />
-    <SendIcon class="Icon" />
-    <SendIcon class="Icon" />
-    <SendIcon class="Icon" />
-    <SendIcon class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
+    <SendIcon aria-hidden="true" class="Icon" />
   </div>
 </template>
 
