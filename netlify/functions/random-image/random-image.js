@@ -1,7 +1,7 @@
 /* globals process */
 
 export const handler = async () => {
-  const value = process.env.UNSPLASH_URL
+  const value = process.env.UNSPLASH_KEY
 
   return {
     statusCode: 200,
