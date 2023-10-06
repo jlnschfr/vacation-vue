@@ -109,7 +109,6 @@ function getRandomImage(): Promise<ImageSource> {
 
 function removeBackground(file: File): Promise<ImageSource> {
   let config: Config = {
-    publicPath: 'public',
     model: 'medium'
   }
   return new Promise((resolve) => {
