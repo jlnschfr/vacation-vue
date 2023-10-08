@@ -1,62 +1,49 @@
-# vacation-vue
+# Send me on vacation
 
-This template should help get you started developing with Vue 3 in Vite.
+Transform your vacation dreams into reality with this super-realistic photo enhancement service. Share your destination and photo, and it’ll create stunning images you can proudly share with friends!
 
-## Recommended IDE Setup
+Disclaimer: No worries, none of your image data will be send to a server. It's using a random image from unsplash.com based on your keywords for the background. The further image processing happens 100% in your browser. Wow, what a miracle of engineering!
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Demo
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+https://send-me-on-vacation.netlify.app/
 
 ## Project Setup
+
+### Install
 
 ```sh
 npm install
 ```
 
+### Create .env file with your unsplash API key
+
+```
+UNSPLASH_KEY="..."
+```
+
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+npm run ntl
 ```
 
-### Type-Check, Compile and Minify for Production
+`npm run dev` wouldn't work locally since it needs a netlify function that provides the random image service.
 
-```sh
-npm run build
-```
+## Why
 
-### Lint with [ESLint](https://eslint.org/)
+This is a private fun project to learn things like
 
-```sh
-npm run lint
-```
+- [Vue3 (Ecosystem and Composition API)](https://vuejs.org/)
+- [Typescript](https://www.typescriptlang.org/)
+- [Netlify Functions](https://www.netlify.com/products/functions/)
+- [unsplash API](https://unsplash.com/documentation)
+- [imgly Background Removal](https://github.com/imgly/background-removal-js)
+- [variable fonts](https://web.dev/variable-fonts/)
+- [drag and drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
-TODOS:
+## Out of Scope
 
-- input !CHECK
-- button !CHECK
-- prettier !CHECK
-- eslint !CHECK
-- stylelint !CHECK
-- vscode config !CHECK
-
-- git
-- Drag and Drop
-- submit logik
-
-- accessibility
-- mobile
+- proper error handling
+- more sophisticated accessibility features (only low hanging fruits)
+- mobile device support
