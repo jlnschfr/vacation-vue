@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import VacationForm from './components/VacationForm.vue'
-
-const response = await fetch('/.netlify/functions/random-image').then((response) => response.json())
-console.log(response)
 </script>
 
 <template>
