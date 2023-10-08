@@ -2,7 +2,9 @@
   "name": "vacation-vue",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "ntl": "ntl dev",
     "dev": "vite --host",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
@@ -21,8 +23,8 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.2",
     "@tsconfig/node18": "^18.2.0",
-    "@types/node": "^18.17.5",
     "@types/merge-images": "^1.2.1",
+    "@types/node": "^18.17.5",
     "@vitejs/plugin-vue": "^4.3.1",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^11.0.3",

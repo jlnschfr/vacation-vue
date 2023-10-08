@@ -3,7 +3,6 @@ import Input from './UI_Input.vue'
 import DragAndDrop from './UI_DragAndDrop.vue'
 import Button from './UI_Button.vue'
 import { computed, ref, type Ref } from 'vue'
-import { createApi } from 'unsplash-js'
 import imglyRemoveBackground, { type Config } from '@imgly/background-removal'
 import mergeImages from 'merge-images'
 import type { Random } from 'unsplash-js/dist/methods/photos/types'
@@ -82,28 +81,25 @@ function getImageDetails(source: File | Blob): Promise<Details> {
   })
 }
 
-function getRandomImage(): Promise<ImageSource> {
-  const unsplash = createApi({ accessKey: 'H77B8WG-2ePtnxonLBTJAPs8gomrotELt1J-9fbvVOQ' })
-  return new Promise((resolve) => {
-    unsplash.photos
-      .getRandom({ query: query.value, orientation: orientation.value })
-      .then((result) => {
-        if (result.errors) {
-          console.log('error occurred: ', result.errors[0])
-        } else {
-          const response: Random = Array.isArray(result.response)
-            ? result.response[0]
-            : result.response
-          const imageUrl: string = response.urls.regular
+async function getRandomImage(): Promise<ImageSource> {
+  const functionUrl: string = `/.netlify/functions/random-image?query=${query.value}&orientation=${orientation.value}`
+  const functionResponse: Response = await fetch(functionUrl)
+  const result = await functionResponse.json()
 
-          fetch(imageUrl).then((response) =>
-            response.blob().then((blob) => {
-              const url = URL.createObjectURL(blob)
-              resolve({ url, blob })
-            })
-          )
-        }
-      })
+  return new Promise((resolve) => {
+    if (result.errors) {
+      console.log('error occurred: ', result.errors[0])
+    } else {
+      const response: Random = Array.isArray(result.response) ? result.response[0] : result.response
+      const imageUrl: string = response.urls.regular
+
+      fetch(imageUrl).then((response) =>
+        response.blob().then((blob) => {
+          const url = URL.createObjectURL(blob)
+          resolve({ url, blob })
+        })
+      )
+    }
   })
 }
 
